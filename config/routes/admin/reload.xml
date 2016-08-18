@@ -1,0 +1,8 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <!-- here we define the bar route -->
+    <route id="admin">
+        <from uri="jetty:http://localhost:8080/admin"/>
+        <log message="Hello Admin"/>
+        <bean ref="loader" method="load"/>
+    </route>
+</routes>
