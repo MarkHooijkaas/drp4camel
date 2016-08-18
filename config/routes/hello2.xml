@@ -1,0 +1,7 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <!-- here we define the bar route -->
+    <route id="foo">
+        <from uri="timer://timer1?period=5000"/>
+        <log message="Hello Other World!"/>
+    </route>
+</routes>
