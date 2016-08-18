@@ -6,6 +6,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,8 @@ public class Main {
 		new Main().run();
 	}
 	void run() throws Exception {
-		final CamelContext context = new DefaultCamelContext();
+		SimpleRegistry registry = new SimpleRegistry();
+		final CamelContext context = new DefaultCamelContext(registry);
 		//context.setTracing(true);
 		context.start();
 
@@ -29,8 +31,11 @@ public class Main {
 			}
 		});
 
-		final RouteLoader loader=new RouteLoader(context, new File("config/routes"));
+		final RouteLoader loader=new RouteLoader(context, new File("config/routes/dynamic"));
+		registry.put("loader", loader);
 		loader.load();
+
+		RouteLoader.loadRoutes(context, new File("config/routes/admin"));
 
 
 		sleepForEver();
