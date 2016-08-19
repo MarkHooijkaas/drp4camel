@@ -1,5 +1,5 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <!-- here we define the bar route -->
+
     <route id="admin/reload">
         <from uri="jetty:http://localhost:8080/admin/reload"/>
         <log message="Hello Admin"/>
@@ -10,5 +10,6 @@
         <from uri="jetty:http://localhost:8080/admin/list"/>
         <log message="Hello Admin"/>
         <bean ref="loader" method="list"/>
+        <marshal ref="jackson"/>
     </route>
 </routes>
