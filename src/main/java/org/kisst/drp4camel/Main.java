@@ -4,9 +4,14 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +25,12 @@ public class Main {
 	}
 	void run() throws Exception {
 		SimpleRegistry registry = new SimpleRegistry();
+		JacksonDataFormat df = new JacksonDataFormat();
+		//df.disableFeature(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		//df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
+		df.enableFeature(SerializationFeature.INDENT_OUTPUT);
+		registry.put("jackson", df);
+
 		final CamelContext context = new DefaultCamelContext(registry);
 		//context.setTracing(true);
 		context.start();
