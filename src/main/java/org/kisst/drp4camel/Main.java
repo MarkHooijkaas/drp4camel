@@ -24,24 +24,24 @@ public class Main {
 		//context.setTracing(true);
 		context.start();
 
+
+		final RouteLoader loader=new RouteLoader(context, new File("config/routes/dynamic"));
+		registry.put("loader", loader);
+
+		RouteLoader.loadRoutes(context, new File("config/routes/admin"));
+
+		loader.load();
+
+		sleepForEver(context);
+	}
+
+	void sleepForEver(CamelContext context) {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				try { context.stop(); }
 				catch (Exception e) { throw new RuntimeException(e); }
 			}
 		});
-
-		final RouteLoader loader=new RouteLoader(context, new File("config/routes/dynamic"));
-		registry.put("loader", loader);
-		loader.load();
-
-		RouteLoader.loadRoutes(context, new File("config/routes/admin"));
-
-
-		sleepForEver();
-	}
-
-	void sleepForEver() {
 		while (true) {
 			try {
 				Thread.sleep(Long.MAX_VALUE);
