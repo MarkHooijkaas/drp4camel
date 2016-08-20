@@ -13,16 +13,20 @@ import java.io.IOException;
 
 public class GitPuller implements ResourcePuller {
 	private final Git git;
+	private final File dir;
 
 	public GitPuller(Git git) {
 		this.git=git;
+		this.dir=git.getRepository().getDirectory();
 	}
 
 	public GitPuller(String localPath) {
 		try {
 			this.git = new Git(new FileRepository(localPath + "/.git"));
+
 		}
 		catch (IOException e) { throw new RuntimeException(e); }
+		this.dir=git.getRepository().getDirectory();
 	}
 
 	public static GitPuller clone(String uri, File localPath) {
@@ -37,10 +41,13 @@ public class GitPuller implements ResourcePuller {
 	}
 
 	@Override public void pull() {
-		PullCommand pullCmd = git.pull();
 		try {
-			pullCmd.call();
+			git.pull().call();
 		}
 		catch (GitAPIException e) { throw new RuntimeException(e); }
+	}
+
+	@Override public File getLocalDirectory() {
+		return dir;
 	}
 }

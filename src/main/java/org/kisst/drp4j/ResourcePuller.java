@@ -10,4 +10,9 @@ public interface ResourcePuller {
 	 * Pull files from the repository to a local place
 	 */
 	public void pull();
+
+	/**
+	 * returns the local directory where files are pulled to.
+	 */
+	public File getLocalDirectory();
 }

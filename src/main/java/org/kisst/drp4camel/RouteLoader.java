@@ -5,6 +5,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.model.RoutesDefinition;
+import org.kisst.drp4j.NonPuller;
+import org.kisst.drp4j.ResourcePuller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,14 +19,29 @@ import java.util.List;
 public class RouteLoader {
 	private final static Logger LOG = LoggerFactory.getLogger(RouteLoader.class);
 	private final CamelContext context;
+	private final ResourcePuller puller;
 	private final File dir;
 
 	public RouteLoader(CamelContext context, File dir){
-		this.context=context;
-		this.dir=dir;
+		this(context, new NonPuller(dir));
 	}
 
-	public void load() { loadRoutes(context, dir);}
+	public RouteLoader(CamelContext context, ResourcePuller puller){
+		this.context=context;
+		this.puller=puller;
+		this.dir=puller.getLocalDirectory();
+	}
+
+	public void pullRoutes() {
+		puller.pull();
+		loadRoutes(context, dir);
+	}
+
+	public void loadRoutes() {
+		loadRoutes(context, dir);
+	}
+
+
 	public List<RouteInfo> list() {
 		List<Route> routes = context.getRoutes();
 		List<RouteInfo> result = new ArrayList<>(routes.size());
