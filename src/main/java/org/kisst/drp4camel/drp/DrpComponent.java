@@ -91,18 +91,23 @@ public class DrpComponent extends UriEndpointComponent {
         CONSUMERS.put(key, list);
     }
 
+    // TODO: better mechanism to handle suspend
+    // This method is called twice, once from suspend, and once from stop, so should not check if it is known
     public void removeConsumer(DrpEndpoint endpoint, DrpConsumer consumer) {
+        //LOG.info("Removing consumer for endpoint {}", endpoint);
         String key = getConsumerKey(endpoint.getEndpointUri());
         List<DrpConsumer> list = CONSUMERS.get(key);
         if (list==null)
-            throw new RuntimeException("No consumer to remove for endpoint "+consumer.getEndpoint().toString());
+            //throw new RuntimeException("No consumer to remove for endpoint "+consumer.getEndpoint().toString());
+            return;
         else {
             list=new ArrayList<>(list);
             boolean found = list.remove(consumer);
             if (! found)
-                throw new RuntimeException("Could not find specific consumer to remove for endpoint "+consumer.getEndpoint().toString());
+                // throw new RuntimeException("Could not find specific consumer to remove for endpoint "+consumer.getEndpoint().toString());
+                return;
         }
-        LOG.info("Removing consumer for endpoint {}, {} consumers remaining", endpoint, list.size());
+        LOG.info("Removed consumer for endpoint {}, {} consumers remaining", endpoint, list.size());
         if (list.isEmpty())
             CONSUMERS.remove(key);
         else
