@@ -1,0 +1,19 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="someMethodSender">
+        <from uri="timer://timer1?period=10000"/>
+        <log message="Sending Message"/>
+        <setBody>
+            <constant>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap/soap/envelope/">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <someMethod xmlns="uri:someNamespace">testje</someMethod>
+                    </soapenv:Body>
+                </soapenv:Envelope>
+            </constant>
+        </setBody>
+        <to uri="drp:gateway"/>
+    </route>
+
+</routes>

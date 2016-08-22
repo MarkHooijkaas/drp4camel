@@ -38,10 +38,10 @@ public class Main {
 		context.start();
 
 
-		final RouteLoader loader=new RouteLoader(context, new File("config/routes/dynamic"));
+		final RouteLoader loader=new RouteLoader(context, new File("config/dynamic/routes"));
 		registry.put("loader", loader);
 
-		RouteLoader.loadRoutes(context, new File("config/routes/admin"));
+		RouteLoader.loadRoutes(context, new File("config/common"));
 
 		loader.loadRoutes();
 

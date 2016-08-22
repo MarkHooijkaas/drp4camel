@@ -1,0 +1,6 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="drp:someMethod"/>
+        <log message="someMethod called!"/>
+    </route>
+</routes>

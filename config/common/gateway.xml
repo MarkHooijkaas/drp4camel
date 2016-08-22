@@ -1,0 +1,20 @@
+<routes xmlns="http://camel.apache.org/schema/spring"
+        xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+
+    <route>
+        <from uri="jetty:http://localhost:8080/gateway"/>
+        <to uri="drp:gateway"/>
+    </route>
+
+    <route >
+        <from uri="drp:gateway"/>
+        <setProperty propertyName="method">
+            <!--<xpath>/*/*[local-name()='Body']/*/text()</xpath>-->
+            <constant>someMethod</constant>
+        </setProperty>
+        <log message="Dispatching to method: ${exchangeProperty.method}"/>
+        <recipientList>
+            <simple>drp:${exchangeProperty.method}</simple>
+        </recipientList>
+    </route>
+</routes>
