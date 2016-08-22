@@ -4,20 +4,16 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.model.dataformat.JsonDataFormat;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spring.SpringCamelContext;
 import org.kisst.drp4camel.drp.DrpComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.io.File;
@@ -29,6 +25,9 @@ public class Main {
 		new Main().run();
 	}
 	void run() throws Exception {
+		ApplicationContext spring = new FileSystemXmlApplicationContext(new String[]{"config/context.xml"});
+		DefaultCamelContext context = SpringCamelContext.springCamelContext(spring);
+
 		SimpleRegistry registry = new SimpleRegistry();
 		JacksonDataFormat df = new JacksonDataFormat();
 		//df.disableFeature(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -36,9 +35,7 @@ public class Main {
 		df.enableFeature(SerializationFeature.INDENT_OUTPUT);
 		registry.put("jackson", df);
 
-		ApplicationContext spring = new FileSystemXmlApplicationContext(new String[]{"config/context.xml"});
-		DefaultCamelContext context = SpringCamelContext.springCamelContext(spring);
-		context.setRegistry(registry);
+		context.setRegistry(new MultiRegistry(registry,context.getRegistry()));
 		//final CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("drp", new DrpComponent());
 		context.start();

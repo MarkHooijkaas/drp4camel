@@ -5,6 +5,11 @@
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+
+    <bean id="alfabet" class="java.lang.String">
+        <constructor-arg index="0" value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
+    </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <route>

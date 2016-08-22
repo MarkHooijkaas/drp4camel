@@ -7,6 +7,8 @@
     <route id="dummy">
         <from uri="drp:someMethod"/>
         <log message="dummy HH someMethod called!"/>
+        <to uri="bean:alfabet?method=substring(4)"/>
+        <log message="${body}"/>
     </route>
 
 </routes>
