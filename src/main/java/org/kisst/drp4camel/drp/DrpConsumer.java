@@ -47,13 +47,9 @@ public class DrpConsumer extends DefaultConsumer implements SuspendableService {
     }
 
     @Override
-    protected void doSuspend() throws Exception {
-        getEndpoint().getComponent().removeConsumer(getEndpoint(), this);
-    }
+    protected void doSuspend() throws Exception { suspend(); }
 
     @Override
-    protected void doResume() throws Exception {
-        getEndpoint().getComponent().addConsumer(getEndpoint(), this);
-    }
+    protected void doResume() throws Exception { resume(); }
 
 }

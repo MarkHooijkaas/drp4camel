@@ -73,10 +73,18 @@ public class DrpComponent extends UriEndpointComponent {
             LOG.info("Found no consumers for {}",key);
             return null;
         }
-        LOG.info("Found {} consumers for {}",list.size(),key);
         if (list.isEmpty())
             return null;
-        return list.get(0);
+        int count=0;
+        for (DrpConsumer cons: list) {
+            if (cons.isStarted()) {
+                LOG.info("Used consumer number {} of {} for {}",count, list.size(),key);
+                return cons;
+            }
+            count++;
+        }
+        LOG.info("No started consumer of {} registered consumers for {}",count, list.size(),key);
+        return null;
     }
 
     public void addConsumer(DrpEndpoint endpoint, DrpConsumer consumer) {
@@ -98,14 +106,14 @@ public class DrpComponent extends UriEndpointComponent {
         String key = getConsumerKey(endpoint.getEndpointUri());
         List<DrpConsumer> list = CONSUMERS.get(key);
         if (list==null)
-            //throw new RuntimeException("No consumer to remove for endpoint "+consumer.getEndpoint().toString());
-            return;
+            throw new RuntimeException("No consumer to remove for endpoint "+consumer.getEndpoint().toString());
+            //return;
         else {
             list=new ArrayList<>(list);
             boolean found = list.remove(consumer);
             if (! found)
-                // throw new RuntimeException("Could not find specific consumer to remove for endpoint "+consumer.getEndpoint().toString());
-                return;
+                throw new RuntimeException("Could not find specific consumer to remove for endpoint "+consumer.getEndpoint().toString());
+                //return;
         }
         LOG.info("Removed consumer for endpoint {}, {} consumers remaining", endpoint, list.size());
         if (list.isEmpty())
