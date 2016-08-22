@@ -4,6 +4,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.kisst.drp4j.NonPuller;
 import org.kisst.drp4j.ResourcePuller;
@@ -56,10 +58,20 @@ public class RouteLoader {
 				loadRoute(context, f);
 		}
 	}
+
+	private static int routeCounter=0;
 	private static void loadRoute(CamelContext context, File f) {
 		LOG.info("Loading routes from {}", f.getName());
 		try (InputStream is = new FileInputStream(f)) {
 			RoutesDefinition routes = context.loadRoutesDefinition(is);
+			for (RouteDefinition r:routes.getRoutes()) {
+				String id = r.getId();
+				if (id==null) {
+					String name = r.getInputs().get(0).getUri();
+					name=name.substring(name.indexOf(':')+1);
+					r.setId(name + '-' + (routeCounter++));
+				}
+			}
 			context.addRouteDefinitions(routes.getRoutes());
 		}
 		catch (Exception e) { throw new RuntimeException(e);}

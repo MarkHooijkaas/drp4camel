@@ -6,12 +6,12 @@
         <to uri="drp:sub1"/>
     </route>
 
-    <route id="sub1">
+    <route>
         <from uri="drp:sub1b"/>
         <log message="sub1: ${exchangeId}"/>
     </route>
 
-    <route id="sub2">
+    <route>
         <from uri="drp:sub1"/>
         <log message="sub2: ${exchangeProperty.CamelCorrelationId}"/>
     </route>
