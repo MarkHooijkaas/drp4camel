@@ -12,6 +12,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.kisst.drp4camel.drp.DrpComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ public class Main {
 		registry.put("jackson", df);
 
 		final CamelContext context = new DefaultCamelContext(registry);
+		context.addComponent("drp", new DrpComponent());
 		//context.setTracing(true);
 		context.start();
 
@@ -41,7 +43,7 @@ public class Main {
 
 		RouteLoader.loadRoutes(context, new File("config/routes/admin"));
 
-		loader.load();
+		loader.loadRoutes();
 
 		sleepForEver(context);
 	}

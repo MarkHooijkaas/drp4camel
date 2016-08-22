@@ -19,6 +19,8 @@ package org.kisst.drp4camel.drp;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +31,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DrpComponent extends UriEndpointComponent {
+    private final static Logger LOG= LoggerFactory.getLogger(DrpComponent.class);
 
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
@@ -65,8 +68,12 @@ public class DrpComponent extends UriEndpointComponent {
     public DrpConsumer getConsumer(DrpEndpoint endpoint) {
         String key = getConsumerKey(endpoint.getEndpointUri());
         List<DrpConsumer> list = CONSUMERS.get(key);
-        if (list==null)
+
+        if (list==null) {
+            LOG.info("Found no consumers for {}",key);
             return null;
+        }
+        LOG.info("Found {} consumers for {}",list.size(),key);
         if (list.isEmpty())
             return null;
         return list.get(0);
@@ -77,10 +84,10 @@ public class DrpComponent extends UriEndpointComponent {
         List<DrpConsumer> list = CONSUMERS.get(key);
         if (list==null)
             list=new ArrayList<>(1);
-        else {
+        else
             list=new ArrayList<>(list);
-            list.add(consumer);
-        }
+        list.add(consumer);
+        LOG.info("Adding consumer {} for endpoint {}", list.size(), endpoint);
         CONSUMERS.put(key, list);
     }
 
@@ -95,6 +102,7 @@ public class DrpComponent extends UriEndpointComponent {
             if (! found)
                 throw new RuntimeException("Could not find specific consumer to remove for endpoint "+consumer.getEndpoint().toString());
         }
+        LOG.info("Removing consumer for endpoint {}, {} consumers remaining", endpoint, list.size());
         if (list.isEmpty())
             CONSUMERS.remove(key);
         else

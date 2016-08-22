@@ -17,6 +17,7 @@
 package org.kisst.drp4camel.drp;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -27,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 
 
 @UriEndpoint(scheme = "drp", title = "Dynamic Routing Point", syntax = "drp:name", consumerClass = DrpConsumer.class, label = "core,endpoint")
-public class DrpEndpoint extends DefaultEndpoint {
+public class DrpEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriPath(description = "Name of drp endpoint") @Metadata(required = "true")
     private String name;
@@ -93,4 +94,6 @@ public class DrpEndpoint extends DefaultEndpoint {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    @Override public boolean isMultipleConsumersSupported() { return true; }
 }

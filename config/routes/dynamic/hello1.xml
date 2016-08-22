@@ -1,18 +1,18 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <!-- here we define the bar route -->
     <route id="bar">
-        <from uri="timer://timer1?period=10000"/>
+        <from uri="timer://timer1?period=100000"/>
         <log message="Hello fast World!"/>
-        <to uri="direct:sub1"/>
+        <to uri="drp:sub1"/>
     </route>
 
     <route id="sub1">
-        <from uri="direct:sub1"/>
+        <from uri="drp:sub1b"/>
         <log message="sub1: ${exchangeId}"/>
     </route>
 
     <route id="sub2">
-        <from uri="direct:sub2"/>
+        <from uri="drp:sub1"/>
         <log message="sub2: ${exchangeProperty.CamelCorrelationId}"/>
     </route>
 

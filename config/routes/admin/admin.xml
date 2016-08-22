@@ -3,7 +3,7 @@
     <route id="admin/reload">
         <from uri="jetty:http://localhost:8080/admin/reload"/>
         <log message="Hello Admin"/>
-        <bean ref="loader" method="load"/>
+        <bean ref="loader" method="pullRoutes"/>
     </route>
 
     <route id="admin/list">
