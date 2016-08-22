@@ -22,6 +22,7 @@ import org.apache.camel.spi.Metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -34,7 +35,7 @@ public class DrpComponent extends UriEndpointComponent {
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DrpEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
-    private static final ConcurrentMap<String, DrpConsumer> CONSUMERS = new ConcurrentHashMap<String, DrpConsumer>();
+    private static final ConcurrentMap<String, List<DrpConsumer>> CONSUMERS = new ConcurrentHashMap<>();
     private boolean block;
     @Metadata(defaultValue = "30000")
     private long timeout = 30000L;
@@ -45,8 +46,9 @@ public class DrpComponent extends UriEndpointComponent {
 
     public static Collection<Endpoint> getConsumerEndpoints() {
         Collection<Endpoint> endpoints = new ArrayList<Endpoint>(CONSUMERS.size());
-        for (DrpConsumer consumer : CONSUMERS.values()) {
-            endpoints.add(consumer.getEndpoint());
+        for (List<DrpConsumer> list : CONSUMERS.values()) {
+            if (! list.isEmpty())
+                endpoints.add(list.get(0).getEndpoint());
         }
         return endpoints;
     }
@@ -62,21 +64,41 @@ public class DrpComponent extends UriEndpointComponent {
 
     public DrpConsumer getConsumer(DrpEndpoint endpoint) {
         String key = getConsumerKey(endpoint.getEndpointUri());
-        return CONSUMERS.get(key);
+        List<DrpConsumer> list = CONSUMERS.get(key);
+        if (list==null)
+            return null;
+        if (list.isEmpty())
+            return null;
+        return list.get(0);
     }
 
     public void addConsumer(DrpEndpoint endpoint, DrpConsumer consumer) {
         String key = getConsumerKey(endpoint.getEndpointUri());
-        DrpConsumer existing = CONSUMERS.putIfAbsent(key, consumer);
-        if (existing != null) {
-            String contextId = existing.getEndpoint().getCamelContext().getName();
-            throw new IllegalStateException("A consumer " + existing + " already exists from CamelContext: " + contextId + ". Multiple consumers not supported");
+        List<DrpConsumer> list = CONSUMERS.get(key);
+        if (list==null)
+            list=new ArrayList<>(1);
+        else {
+            list=new ArrayList<>(list);
+            list.add(consumer);
         }
+        CONSUMERS.put(key, list);
     }
 
     public void removeConsumer(DrpEndpoint endpoint, DrpConsumer consumer) {
         String key = getConsumerKey(endpoint.getEndpointUri());
-        CONSUMERS.remove(key);
+        List<DrpConsumer> list = CONSUMERS.get(key);
+        if (list==null)
+            throw new RuntimeException("No consumer to remove for endpoint "+consumer.getEndpoint().toString());
+        else {
+            list=new ArrayList<>(list);
+            boolean found = list.remove(consumer);
+            if (! found)
+                throw new RuntimeException("Could not find specific consumer to remove for endpoint "+consumer.getEndpoint().toString());
+        }
+        if (list.isEmpty())
+            CONSUMERS.remove(key);
+        else
+            CONSUMERS.put(key, list);
     }
 
     private static String getConsumerKey(String uri) {
