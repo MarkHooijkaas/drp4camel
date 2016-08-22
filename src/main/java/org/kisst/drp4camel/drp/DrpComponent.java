@@ -118,7 +118,7 @@ public class DrpComponent extends UriEndpointComponent {
     @Override
     protected void doStop() throws Exception {
         if (START_COUNTER.decrementAndGet() <= 0) {
-            // clear queues when no more direct-vm components in use
+            // clear queues when no more DrpComponents in use
             CONSUMERS.clear();
         }
         super.doStop();
@@ -129,7 +129,7 @@ public class DrpComponent extends UriEndpointComponent {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
+     * If sending a message to a drp endpoint which has no active consumer,
      * then we can tell the producer to block and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {

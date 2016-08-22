@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * The expression to select direct-vm consumers based on ant-like path pattern matching.
+ * The expression to select drp consumers based on ant-like path pattern matching.
  */
 public class DrpExpression extends ExpressionAdapter {
 
