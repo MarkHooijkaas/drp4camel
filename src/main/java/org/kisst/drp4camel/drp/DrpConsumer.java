@@ -21,7 +21,7 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * The direct-vm consumer
+ * The drp consumer
  */
 public class DrpConsumer extends DefaultConsumer implements SuspendableService {
 

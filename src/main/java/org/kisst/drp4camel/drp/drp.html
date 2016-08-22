@@ -1,15 +1,15 @@
 <html>
 <header>
-<title>Direct VM</title>
+<title>Dynamic Routing Point</title>
 </header>
 <body>
-<h1>Direct VM</h1>
-<b>Scheme: direct-vm</b>
+<h1>Dynamic Routing Point</h1>
+<b>Scheme: drp</b>
 <ul>
 <li>core</li>
 <li>endpoint</li>
 </ul>
-<p>The direct-vm endpoint.</p>
+<p>The drp endpoint.</p>
 <table class='table'>
   <tr>
     <th>Name</th>
@@ -28,7 +28,7 @@
     <td>true</td>
     <td>false</td>
     <td></td>
-    <td>Name of direct-vm endpoint</td>
+    <td>Name of drp endpoint</td>
   </tr>
   <tr>
     <td>block</td>
@@ -38,7 +38,7 @@
     <td>false</td>
     <td></td>
     <td></td>
-    <td>If sending a message to a direct endpoint which has no active consumer,
+    <td>If sending a message to a drp endpoint which has no active consumer,
  then we can tell the producer to block and wait for the consumer to become active.</td>
   </tr>
   <tr>
@@ -75,7 +75,7 @@
  @param synchronous <tt>true</tt> to enforce synchronous processing</td>
   </tr>
 </table>
-<h2>direct-vm consumer</h2>
-<p>The direct consumer.</p>
+<h2>drp consumer</h2>
+<p>The drp consumer.</p>
 </body>
 </html>

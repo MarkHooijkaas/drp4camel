@@ -24,9 +24,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
-*
-*/
 public final class DrpProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DrpProcessor.class);
@@ -89,6 +86,6 @@ public final class DrpProcessor extends DelegateAsyncProcessor {
 
     @Override
     public String toString() {
-        return "DirectVm[" + processor + "]";
+        return "Drp[" + processor + "]";
     }
 }

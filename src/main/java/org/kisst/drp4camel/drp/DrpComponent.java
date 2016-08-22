@@ -27,9 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DrpEndpoint} and holds the list of named direct-vm endpoints.
- */
 public class DrpComponent extends UriEndpointComponent {
 
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
@@ -46,11 +43,6 @@ public class DrpComponent extends UriEndpointComponent {
         super(DrpEndpoint.class);
     }
 
-    /**
-     * Gets all the consumer endpoints.
-     *
-     * @return consumer endpoints
-     */
     public static Collection<Endpoint> getConsumerEndpoints() {
         Collection<Endpoint> endpoints = new ArrayList<Endpoint>(CONSUMERS.size());
         for (DrpConsumer consumer : CONSUMERS.values()) {
@@ -126,9 +118,6 @@ public class DrpComponent extends UriEndpointComponent {
         return timeout;
     }
 
-    /**
-     * The timeout value to use if block is enabled.
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

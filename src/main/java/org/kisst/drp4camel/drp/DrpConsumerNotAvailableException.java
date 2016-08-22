@@ -19,11 +19,6 @@ package org.kisst.drp4camel.drp;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 
-/**
- * Exception thrown when no consumers are available.
- *
- * @version
- */
 public class DrpConsumerNotAvailableException extends CamelExchangeException {
 
     private static final long serialVersionUID = 1L;

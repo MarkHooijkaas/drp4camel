@@ -19,20 +19,17 @@ package org.kisst.drp4camel.drp;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-/**
- * The direct-vm endpoint.
- */
-@UriEndpoint(scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
+
+@UriEndpoint(scheme = "drp", title = "Dynamic Routing Point", syntax = "drp:name", consumerClass = DrpConsumer.class, label = "core,endpoint")
 public class DrpEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of drp endpoint") @Metadata(required = "true")
     private String name;
 
     @UriParam(label = "producer")
@@ -79,7 +76,7 @@ public class DrpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
+     * If sending a message to a drp endpoint which has no active consumer,
      * then we can tell the producer to block and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {

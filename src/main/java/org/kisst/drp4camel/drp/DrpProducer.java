@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
 
 /**
- * The direct-vm producer
+ * The drp producer
  */
 public class DrpProducer extends DefaultAsyncProducer {
 
