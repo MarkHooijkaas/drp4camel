@@ -10,6 +10,10 @@
         <constructor-arg index="0" value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
     </bean>
 
+    <bean id="thrower" class="org.kisst.drp4camel.ThrowException">
+        <constructor-arg index="0" value="Some unspecified error"/>
+    </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <route>

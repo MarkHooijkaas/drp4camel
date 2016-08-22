@@ -9,6 +9,7 @@
         <log message="dummy HH someMethod called!"/>
         <to uri="bean:alfabet?method=substring(4)"/>
         <log message="${body}"/>
+        <to uri="bean:thrower?method=msg('some problem {}',${id})"/>
     </route>
 
 </routes>
