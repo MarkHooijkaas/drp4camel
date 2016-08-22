@@ -4,6 +4,7 @@
         <from uri="jetty:http://localhost:8080/admin/reload"/>
         <log message="Hello Admin"/>
         <bean ref="loader" method="pullRoutes"/>
+        <!--<marshal ref="jackson"/>-->
     </route>
 
     <route id="admin/list">

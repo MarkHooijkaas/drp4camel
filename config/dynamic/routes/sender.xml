@@ -1,7 +1,7 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
     <route id="someMethodSender">
-        <from uri="timer://timer1?period=10000"/>
+        <from uri="timer://timer1?period=100000"/>
         <log message="Sending Message"/>
         <setBody>
             <constant>

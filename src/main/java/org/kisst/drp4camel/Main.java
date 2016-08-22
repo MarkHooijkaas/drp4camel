@@ -12,9 +12,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.spring.SpringCamelContext;
 import org.kisst.drp4camel.drp.DrpComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.io.File;
 
@@ -32,9 +36,11 @@ public class Main {
 		df.enableFeature(SerializationFeature.INDENT_OUTPUT);
 		registry.put("jackson", df);
 
-		final CamelContext context = new DefaultCamelContext(registry);
+		ApplicationContext spring = new FileSystemXmlApplicationContext(new String[]{"config/context.xml"});
+		DefaultCamelContext context = SpringCamelContext.springCamelContext(spring);
+		context.setRegistry(registry);
+		//final CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("drp", new DrpComponent());
-		//context.setTracing(true);
 		context.start();
 
 
