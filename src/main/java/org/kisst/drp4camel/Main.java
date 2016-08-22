@@ -39,10 +39,11 @@ public class Main {
 
 
 		final RouteLoader loader=new RouteLoader(context, new File("config/dynamic/routes"));
+		final RouteLoader commonLoader=new RouteLoader(context, new File("config/common"));
 		registry.put("loader", loader);
+		registry.put("commonLoader", commonLoader);
 
-		RouteLoader.loadRoutes(context, new File("config/common"));
-
+		commonLoader.loadRoutes();
 		loader.loadRoutes();
 
 		sleepForEver(context);

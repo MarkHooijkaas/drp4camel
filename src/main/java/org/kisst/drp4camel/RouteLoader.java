@@ -1,12 +1,10 @@
 package org.kisst.drp4camel;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.kisst.drp4camel.drp.Md5Checksum;
 import org.kisst.drp4j.NonPuller;
 import org.kisst.drp4j.ResourcePuller;
 import org.slf4j.Logger;
@@ -17,12 +15,15 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RouteLoader {
 	private final static Logger LOG = LoggerFactory.getLogger(RouteLoader.class);
 	private final CamelContext context;
 	private final ResourcePuller puller;
 	private final File dir;
+	private final ConcurrentHashMap<String,RouteFileInfo> routeFiles = new ConcurrentHashMap<>();
+
 
 	public RouteLoader(CamelContext context, File dir){
 		this(context, new NonPuller(dir));
@@ -36,11 +37,11 @@ public class RouteLoader {
 
 	public void pullRoutes() {
 		puller.pull();
-		loadRoutes(context, dir);
+		loadRoutes(dir);
 	}
 
 	public void loadRoutes() {
-		loadRoutes(context, dir);
+		loadRoutes(dir);
 	}
 
 
@@ -52,10 +53,18 @@ public class RouteLoader {
 		return result;
 	}
 
-	public static void loadRoutes(CamelContext context, File dir) {
+	public void loadRoutes(File dir) {
 		for (File f : dir.listFiles()) {
-			if (f.isFile() && f.getName().endsWith(".xml"))
+			if (f.isFile() && f.getName().endsWith(".xml")) {
+				RouteFileInfo info=routeFiles.get(f.getName());
+				RouteFileInfo newInfo=new RouteFileInfo(f);
+				if (info!=null && newInfo.md5.equals(info.md5)) {
+					LOG.info("Skipping loading routes from {} since MD5 is not changed",f);
+					continue;
+				}
 				loadRoute(context, f);
+				routeFiles.put(f.getName(),newInfo);
+			}
 		}
 	}
 
@@ -90,6 +99,14 @@ public class RouteLoader {
 			this.description=r.getDescription();
 			this.consumer=r.getConsumer().getClass().getSimpleName();
 			this.endpoint=r.getEndpoint().toString();
+		}
+	}
+
+	public static class RouteFileInfo {
+		public final String md5;
+
+		private RouteFileInfo(File f) {
+			this.md5 = Md5Checksum.getMD5Checksum(f);
 		}
 	}
 }
