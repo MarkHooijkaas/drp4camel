@@ -7,6 +7,8 @@ import org.apache.camel.model.RoutesDefinition;
 import org.kisst.drp4camel.drp.Md5Checksum;
 import org.kisst.drp4j.NonPuller;
 import org.kisst.drp4j.ResourcePuller;
+import org.kisst.util.TraceItem;
+import org.kisst.util.TraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +27,7 @@ public class RouteLoader {
 	private final CamelContext context;
 	private final ResourcePuller puller;
 	private final File dir;
-	private final ConcurrentHashMap<String,RouteFileInfo> routeFiles = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<File,RouteFileInfo> routeFiles = new ConcurrentHashMap<>();
 
 
 	public RouteLoader(CamelContext context, File dir){
@@ -38,13 +40,13 @@ public class RouteLoader {
 		this.dir=puller.getLocalDirectory();
 	}
 
-	public void pullRoutes() {
+	public TraceLog pullRoutes() {
 		puller.pull();
-		loadRoutes(dir);
+		return loadRoutes(dir);
 	}
 
-	public void loadRoutes() {
-		loadRoutes(dir);
+	public TraceLog loadRoutes() {
+		return loadRoutes(dir);
 	}
 
 
@@ -56,35 +58,37 @@ public class RouteLoader {
 		return result;
 	}
 
-	public void loadRoutes(File dir) {
+	public TraceLog loadRoutes(File dir) {
+		TraceLog trace= new TraceLog(true);
 		long timestamp=System.currentTimeMillis();
 		// make a clone of all known routes, which will be removed, unless they are unchanged
-		LinkedHashMap<String, RouteFileInfo> toBeRemoved = new LinkedHashMap<String, RouteFileInfo>();
-		Set<String> oldFiles = new HashSet<>(routeFiles.keySet());
+		LinkedHashMap<File, RouteFileInfo> toBeRemoved = new LinkedHashMap<>();
+		Set<File> oldFiles = new HashSet<>(routeFiles.keySet());
 		for (File f : dir.listFiles()) {
 			if (f.isFile() && f.getName().endsWith(".xml")) {
-				oldFiles.remove(f.getName());
-				RouteFileInfo info=routeFiles.get(f.getName());
+				oldFiles.remove(f);
+				RouteFileInfo info=routeFiles.get(f);
 				String md5 = Md5Checksum.getMD5Checksum(f);
 				if (info!=null && md5.equals(info.md5)) {
-					LOG.info("Skipping loading routes from {} since MD5 is not changed",f);
+					trace.info(new SkippingFileTrace(f));
 				}
 				else {
-					List<String> routes = loadRouteFile(f);
+					List<String> routes = loadRouteFile(trace,f);
 					if (info!=null)
-						toBeRemoved.put(f.getName(),info);
+						toBeRemoved.put(f,info);
 					info = new RouteFileInfo(timestamp, md5, routes);
-					routeFiles.put(f.getName(),info);
+					routeFiles.put(f,info);
 				}
 			}
 		}
-		removeRoutes(toBeRemoved);
-		removeFiles(oldFiles);
+		removeRoutes(trace,toBeRemoved);
+		removeFiles(trace,oldFiles);
+		return trace;
 	}
 
 	private static int routeCounter=0;
-	private List<String> loadRouteFile(File f) {
-		LOG.info("Loading routes from {}", f.getName());
+	private List<String> loadRouteFile(TraceLog trace, File f) {
+		trace.info(new LoadingFileTrace(f));
 		List<String> result=new ArrayList<>();
 		try (InputStream is = new FileInputStream(f)) {
 			RoutesDefinition routes = context.loadRoutesDefinition(is);
@@ -99,6 +103,7 @@ public class RouteLoader {
 				else
 					id="@@"+id;
 				result.add(id);
+				trace.info(new AddingRoute(f,id));
 			}
 			context.addRouteDefinitions(routes.getRoutes());
 			return result;
@@ -106,8 +111,8 @@ public class RouteLoader {
 		catch (Exception e) { throw new RuntimeException(e);}
 	}
 
-	private void removeRoutes(LinkedHashMap<String, RouteFileInfo> oldRouteFiles) {
-		for (String filename: oldRouteFiles.keySet()) {
+	private void removeRoutes(TraceLog trace, LinkedHashMap<File, RouteFileInfo> oldRouteFiles) {
+		for (File filename: oldRouteFiles.keySet()) {
 			RouteFileInfo rf=oldRouteFiles.get(filename);
 			for (String id:rf.routes) {
 				try {
@@ -115,15 +120,15 @@ public class RouteLoader {
 						// TODO: check if route is still there
 						RouteFileInfo rfnew = this.routeFiles.get(filename);
 						if (rfnew!=null && rfnew.routes.contains(id))
-							LOG.info("keeping statically named route {} in file {}", id, filename);
+							trace.info(new KeepingStaticNamedRoute(filename, id));
 						else {
-							LOG.info("removing statically named route {} in file {}", id, filename);
+							trace.info(new RemovingStaticNamedRoute(filename,id));
 							id = id.substring(2);
 							context.removeRoute(id);
 						}
 					}
 					else {
-						LOG.info("removing dynamically named route {} in file {}", id, filename);
+						trace.info(new RemovingDynamicNamedRoute(filename,id));
 						context.removeRoute(id);
 					}
 				}
@@ -133,14 +138,14 @@ public class RouteLoader {
 
 	}
 
-	private void removeFiles(Set<String> oldFiles) {
-		for (String filename: oldFiles) {
-			RouteFileInfo rf=routeFiles.get(filename);
+	private void removeFiles(TraceLog trace, Set<File> oldFiles) {
+		for (File f: oldFiles) {
+			RouteFileInfo rf=routeFiles.get(f);
 			for (String id:rf.routes) {
 				try {
 					if (id.startsWith("@@"))
 						id = id.substring(2);
-					LOG.info("removing route {} in deleted file {}", id, filename);
+					trace.info(new RemovingDeletedFileRoute(f, id));
 					context.removeRoute(id);
 				}
 				catch (Exception e) { throw new RuntimeException(e);} // TODO: remove other routes?
@@ -176,4 +181,27 @@ public class RouteLoader {
 			this.routes=routes;
 		}
 	}
+
+	public class LoadingFileTrace extends TraceItem.MessageBase1<File> {
+		public LoadingFileTrace(File file) { super("Loading route file {}",file); }
+	}
+	public class SkippingFileTrace extends TraceItem.MessageBase1<File> {
+		public SkippingFileTrace(File file) { super("Skipping route file {}",file); }
+	}
+	public class AddingRoute extends TraceItem.MessageBase2<File,String> {
+		public AddingRoute(File file, String routeId) { super("\tAdding route from file {} with id {}",file,routeId); }
+	}
+	public class RemovingDynamicNamedRoute extends TraceItem.MessageBase2<File,String> {
+		public RemovingDynamicNamedRoute(File file, String routeId) { super("\tRemoving dynamically named route from file {} with id {}",file,routeId); }
+	}
+	public class KeepingStaticNamedRoute extends TraceItem.MessageBase2<File,String> {
+		public KeepingStaticNamedRoute (File file, String routeId) { super("\tKeeping static named route from file {} with id {}",file,routeId); }
+	}
+	public class RemovingStaticNamedRoute extends TraceItem.MessageBase2<File,String> {
+		public RemovingStaticNamedRoute (File file, String routeId) { super("\tRemoving static named route from file {} with id {}",file,routeId); }
+	}
+	public class RemovingDeletedFileRoute extends TraceItem.MessageBase2<File,String> {
+		public RemovingDeletedFileRoute (File file, String routeId) { super("\tRemoving route from deleted file {} with id {}",file,routeId); }
+	}
+
 }
