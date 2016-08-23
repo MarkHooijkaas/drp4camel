@@ -1,5 +1,3 @@
-package org.kisst.drp4camel;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -10,6 +8,9 @@ import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.kisst.drp4camel.MultiRegistry;
+import org.kisst.drp4camel.RouteLoader;
+import org.kisst.drp4camel.SoapActionLocator;
 import org.kisst.drp4camel.drp.DrpComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,11 @@ import java.io.File;
 public class Main {
 	static Logger LOG = LoggerFactory.getLogger(Main.class);
 	public static void main(String[] args) throws Exception {
-		configureLogging("config/logback.xml");
+		configureLogging("src/test/config/logback.xml");
 		new Main().run();
 	}
 	void run() throws Exception {
-		ApplicationContext spring = new FileSystemXmlApplicationContext(new String[]{"config/context.xml"});
+		ApplicationContext spring = new FileSystemXmlApplicationContext(new String[]{"src/test/config/context.xml"});
 		DefaultCamelContext context = SpringCamelContext.springCamelContext(spring);
 
 		SimpleRegistry registry = new SimpleRegistry();
@@ -36,14 +37,14 @@ public class Main {
 		registry.put("jackson", df);
 		registry.put("SoapActionLocator", new SoapActionLocator());
 
-		context.setRegistry(new MultiRegistry(registry,context.getRegistry()));
+		context.setRegistry(new MultiRegistry(registry, context.getRegistry()));
 		//final CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("drp", new DrpComponent());
 		context.start();
 
 
-		final RouteLoader loader=new RouteLoader(context, new File("config/dynamic/routes"));
-		final RouteLoader commonLoader=new RouteLoader(context, new File("config/common"));
+		final RouteLoader loader=new RouteLoader(context, new File("src/test/config/dynamic/routes"));
+		final RouteLoader commonLoader=new RouteLoader(context, new File("src/test/config/common"));
 		registry.put("loader", loader);
 		registry.put("commonLoader", commonLoader);
 

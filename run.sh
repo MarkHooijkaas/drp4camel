@@ -1,6 +1,6 @@
 #!/bin/bash
 
 source run-cp.tmp
-MAINCLASS=org.kisst.drp4camel.Main
+MAINCLASS=Main
 
-java -cp ./build/classes/main:$CP $MAINCLASS
+java -cp ./build/classes/main:./build/classes/test:$CP $MAINCLASS

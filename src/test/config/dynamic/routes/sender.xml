@@ -3,7 +3,7 @@
     <route id="someMethodSender">
         <from uri="timer://timer1?period=100000"/>
         <log message="Sending Message"/>
-        <to uri="velocity:file:config/templates/soapExample.vm"/>
+        <to uri="velocity:file:src/test/config/templates/soapExample.vm"/>
         <to uri="drp:gateway"/>
     </route>
 
