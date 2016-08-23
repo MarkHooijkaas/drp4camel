@@ -1,15 +1,16 @@
-<routes xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/spring" id="klaas">
     <route>
         <from uri="drp:someMethod2"/>
-        <log message="someMethod called!"/>
+        <log message="someMethod2 called!"/>
     </route>
 
-    <route id="dummy">
+    <route id="dummy" group="BAP,AAD,Cordys">
         <from uri="drp:someMethod"/>
         <log message="dummy HH someMethod called!"/>
-        <to uri="bean:alfabet?method=substring(4)"/>
+        <to uri="bean:alfabet?method=substring(4,7)"/>
         <log message="${body}"/>
-        <to uri="bean:thrower?method=msg('some problem {}',${id})"/>
+        <!-- <to uri="bean:thrower?method=msg('some problem {}',${id})"/> -->
     </route>
+
 
 </routes>

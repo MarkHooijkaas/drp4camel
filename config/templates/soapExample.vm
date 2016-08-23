@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap/soap/envelope/">
+    <soap:Header>
+    </soap:Header>
+    <soap:Body>
+        <someMethod xmlns="dummy:v1"/>
+    </soap:Body>
+</soap:Envelope>

@@ -6,15 +6,13 @@
         <to uri="drp:gateway"/>
     </route>
 
-    <route >
+    <route>
         <from uri="drp:gateway"/>
-        <setProperty propertyName="method">
-            <!--<xpath>/*/*[local-name()='Body']/*/text()</xpath>-->
-            <constant>someMethod</constant>
-        </setProperty>
-        <log message="Dispatching to method: ${exchangeProperty.method}"/>
+        <to uri="bean:SoapActionLocator"/>
+        <log message="Dispatching to method: ${exchangeProperty.soapOperationName}"/>
         <recipientList>
-            <simple>drp:${exchangeProperty.method}</simple>
+            <simple>drp:${exchangeProperty.soapOperationName}</simple>
         </recipientList>
+        <log message="Succeeded"/>
     </route>
 </routes>

@@ -22,6 +22,7 @@ dependencies {
     compile group: 'org.apache.camel', name: 'camel-spring', version: '2.15.1'
     compile group: 'org.apache.camel', name: 'camel-jetty', version: '2.15.1'
     compile group: 'org.apache.camel', name: 'camel-jackson', version: '2.15.1'
+    compile group: 'org.apache.camel', name: 'camel-velocity', version: '2.15.1'
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.4.1.201607150455-r'
     //compile 'org.codehaus.groovy:groovy-all:2.3.11'
     //compile group: 'org.apache.servicemix.nmr', name: 'org.apache.servicemix.nmr.core', version: '1.6.1'

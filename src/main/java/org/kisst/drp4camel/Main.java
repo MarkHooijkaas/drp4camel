@@ -34,6 +34,7 @@ public class Main {
 		//df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
 		df.enableFeature(SerializationFeature.INDENT_OUTPUT);
 		registry.put("jackson", df);
+		registry.put("SoapActionLocator", new SoapActionLocator());
 
 		context.setRegistry(new MultiRegistry(registry,context.getRegistry()));
 		//final CamelContext context = new DefaultCamelContext(registry);
