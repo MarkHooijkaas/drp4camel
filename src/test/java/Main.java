@@ -40,7 +40,6 @@ public class Main {
 		context.setRegistry(new MultiRegistry(registry, context.getRegistry()));
 		//final CamelContext context = new DefaultCamelContext(registry);
 		context.addComponent("drp", new DrpComponent());
-		context.start();
 
 
 		final RouteLoader loader=new RouteLoader(context, new File("src/test/config/dynamic/routes"));
@@ -51,6 +50,7 @@ public class Main {
 		commonLoader.loadRoutes();
 		loader.loadRoutes();
 
+		context.start();
 		sleepForEver(context);
 	}
 

@@ -5,8 +5,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.kisst.drp4camel.drp.Md5Checksum;
-import org.kisst.drp4j.NonPuller;
-import org.kisst.drp4j.ResourcePuller;
 import org.kisst.util.TraceItem;
 import org.kisst.util.TraceLog;
 import org.slf4j.Logger;
@@ -26,12 +24,15 @@ public class RouteLoader {
 	private final static Logger LOG = LoggerFactory.getLogger(RouteLoader.class);
 	private final CamelContext context;
 	private final File dir;
+	private final int recurseDepth;
+
 	private final ConcurrentHashMap<File,RouteFileInfo> routeFiles = new ConcurrentHashMap<>();
 
-
-	public RouteLoader(CamelContext context, File dir){
+	public RouteLoader(CamelContext context, File dir) { this(context, dir, 0); }
+	public RouteLoader(CamelContext context, File dir, int recurseDepth){
 		this.context=context;
 		this.dir=dir;
+		this.recurseDepth=recurseDepth;
 	}
 
 	public List<RouteInfo> list() {
@@ -44,12 +45,20 @@ public class RouteLoader {
 
 	public TraceLog loadRoutes() {
 		TraceLog trace= new TraceLog(true);
+		return loadSubRoutes(trace, dir,0);
+	}
+
+	public TraceLog loadSubRoutes(TraceLog trace, File subdir, int depth) {
 		long timestamp=System.currentTimeMillis();
 		// make a clone of all known routes, which will be removed, unless they are unchanged
 		LinkedHashMap<File, RouteFileInfo> toBeRemoved = new LinkedHashMap<>();
 		Set<File> oldFiles = new HashSet<>(routeFiles.keySet());
-		for (File f : dir.listFiles()) {
-			if (f.isFile() && f.getName().endsWith(".xml")) {
+		for (File f : subdir.listFiles()) {
+			if (f.isDirectory()) {
+				if (depth<recurseDepth)
+					loadSubRoutes(trace, f, depth+1);
+			}
+			else if (f.isFile() && f.getName().endsWith(".xml")) {
 				oldFiles.remove(f);
 				RouteFileInfo info=routeFiles.get(f);
 				String md5 = Md5Checksum.getMD5Checksum(f);
