@@ -38,7 +38,7 @@ public class DrpComponent extends UriEndpointComponent {
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DrpEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
-    private static final ConcurrentMap<String, List<DrpConsumer>> CONSUMERS = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, List<DrpConsumer>> CONSUMERS = new ConcurrentHashMap<>();
     private boolean block;
     @Metadata(defaultValue = "30000")
     private long timeout = 30000L;
@@ -47,7 +47,7 @@ public class DrpComponent extends UriEndpointComponent {
         super(DrpEndpoint.class);
     }
 
-    public static Collection<Endpoint> getConsumerEndpoints() {
+    public Collection<Endpoint> getConsumerEndpoints() {
         Collection<Endpoint> endpoints = new ArrayList<Endpoint>(CONSUMERS.size());
         for (List<DrpConsumer> list : CONSUMERS.values()) {
             if (! list.isEmpty())

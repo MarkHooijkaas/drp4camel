@@ -40,11 +40,12 @@ public class DrpExpression extends ExpressionAdapter {
     @Override
     public Object evaluate(Exchange exchange) {
         Collection<Endpoint> endpoints = new ArrayList<Endpoint>();
-        for (Endpoint endpoint : DrpComponent.getConsumerEndpoints()) {
-            if (matcher.match(pattern, endpoint.getEndpointKey())) {
-                endpoints.add(endpoint);
-            }
-        }
+        // TODO
+        //for (Endpoint endpoint : DrpComponent.getConsumerEndpoints()) {
+        //    if (matcher.match(pattern, endpoint.getEndpointKey())) {
+        //        endpoints.add(endpoint);
+        //    }
+        //}
         return endpoints;
     }
 
