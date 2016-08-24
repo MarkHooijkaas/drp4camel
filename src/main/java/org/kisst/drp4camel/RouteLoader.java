@@ -86,13 +86,13 @@ public class RouteLoader {
 		try (InputStream is = new FileInputStream(f)) {
 			RoutesDefinition routes = context.loadRoutesDefinition(is);
 			//System.out.println(r.getDescription().getLang());
-			System.out.println("SHORT:"+routes.getShortName());
-			System.out.println("LABEL:"+routes.getLabel());
+			//System.out.println("SHORT:"+routes.getShortName());
+			//System.out.println("LABEL:"+routes.getLabel());
 
 			for (RouteDefinition r:routes.getRoutes()) {
 				//System.out.println(r.getShortName());
-				System.out.println(r.getGroup());
-				System.out.println(r.getLabel());
+				//System.out.println(r.getGroup());
+				//System.out.println(r.getLabel());
 				//for (String key:r.getProperties().keySet())
 				//	System.out.println(key+"\t"+r.getProperties().get(key));
 
