@@ -25,30 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RouteLoader {
 	private final static Logger LOG = LoggerFactory.getLogger(RouteLoader.class);
 	private final CamelContext context;
-	private final ResourcePuller puller;
 	private final File dir;
 	private final ConcurrentHashMap<File,RouteFileInfo> routeFiles = new ConcurrentHashMap<>();
 
 
 	public RouteLoader(CamelContext context, File dir){
-		this(context, new NonPuller(dir));
-	}
-
-	public RouteLoader(CamelContext context, ResourcePuller puller){
 		this.context=context;
-		this.puller=puller;
-		this.dir=puller.getLocalDirectory();
+		this.dir=dir;
 	}
-
-	public TraceLog pullRoutes() {
-		puller.pull();
-		return loadRoutes(dir);
-	}
-
-	public TraceLog loadRoutes() {
-		return loadRoutes(dir);
-	}
-
 
 	public List<RouteInfo> list() {
 		List<Route> routes = context.getRoutes();
@@ -58,7 +42,7 @@ public class RouteLoader {
 		return result;
 	}
 
-	public TraceLog loadRoutes(File dir) {
+	public TraceLog loadRoutes() {
 		TraceLog trace= new TraceLog(true);
 		long timestamp=System.currentTimeMillis();
 		// make a clone of all known routes, which will be removed, unless they are unchanged
