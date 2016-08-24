@@ -3,4 +3,4 @@
 source run-cp.tmp
 MAINCLASS=Main
 
-java -cp ./build/classes/main:./build/classes/test:$CP $MAINCLASS
+java -cp ./build/classes/main:./build/classes/test:$CP $1
