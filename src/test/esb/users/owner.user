@@ -1,0 +1,4 @@
+user.john.authorized.for.service.Books.operation.changePrice=true
+user.john.authorized.for.operation.order=true
+user.john.authorized.for.service.Books=true
+user.john.authorized.for.package.Books=true

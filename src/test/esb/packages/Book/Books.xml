@@ -1,0 +1,17 @@
+<routes xmlns="http://camel.apache.org/schema/spring" id="Books">
+    <route group="Books">
+        <from uri="drp:changePrice" />
+        <log message="price changed"/>
+    </route>
+
+    <route group="Books">
+        <from uri="drp:orderBook"/>
+        <log message="book ordered"/>
+    </route>
+
+    <route group="Books">
+        <from uri="drp:getPrice"/>
+        <log message="price is cheap"/>
+    </route>
+
+</routes>

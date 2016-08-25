@@ -1,0 +1,14 @@
+<routes xmlns="http://camel.apache.org/schema/spring" id="HttpCaller">
+
+    <route group="HttpCaller">
+        <from uri="drp:callHttp"/>
+        <setProperty propertyName="url">
+            <constant>http://todo.com/</constant>
+        </setProperty>
+        <log message="calling ${exchangeProperty.url}"/>
+        <recipientList>
+            <simple>${exchangeProperty.url}</simple>
+        </recipientList>
+    </route>
+
+</routes>

@@ -1,0 +1,18 @@
+<routes xmlns="http://camel.apache.org/schema/spring"
+        xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+
+    <route>
+        <from uri="jetty:http://localhost:8080/gateway"/>
+        <to uri="drp:gateway"/>
+    </route>
+
+    <route>
+        <from uri="drp:gateway"/>
+        <to uri="bean:SoapActionLocator"/>
+        <log message="Dispatching to method: ${exchangeProperty.soapOperationName}"/>
+        <recipientList>
+            <simple>drp:${exchangeProperty.soapOperationName}</simple>
+        </recipientList>
+        <log message="Succeeded"/>
+    </route>
+</routes>

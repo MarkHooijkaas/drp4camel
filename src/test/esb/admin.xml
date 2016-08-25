@@ -1,0 +1,16 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="admin/reload">
+        <from uri="jetty:http://localhost:8080/admin/reload"/>
+        <log message="Hello Admin"/>
+        <bean ref="loader" method="pullRoutes"/>
+        <!--<marshal ref="jackson"/>-->
+    </route>
+
+    <route id="admin/list">
+        <from uri="jetty:http://localhost:8080/admin/list"/>
+        <log message="Hello Admin"/>
+        <bean ref="loader" method="list"/>
+        <marshal ref="jackson"/>
+    </route>
+</routes>
