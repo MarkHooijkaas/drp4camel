@@ -1,0 +1,61 @@
+Camel
+ESB
+Dynamic
+Route
+Loader
+Git
+
+Controlled 
+
+High A
+
+
+label op <routes...>
+group 
+id
+from drp:....
+
+
+Cordys
+ISV autorisate
+namespace(s)
+operatie
+
+url,
+methodName
+SOAPAction
+wsa:Action
+
+
+service.BAP-V4.raadplegenPersoon.route=Cordys
+service.BAP-V4.raadplegenPersoon.route=HttpCaller
+service.BAP-V4.raadplegenPersoon.endpoint.FA8=http://.....
+
+service.BRON.blabla.cluster=As400ConnectorCluster
+
+<from uri="drp:BAP-V4.raadplegenPersoon"/>
+
+
+1. Determine service+operation name 
+2. lookup endpoint for service: default=operation name
+
+repo
+	routes
+	properties
+	templates
+	users
+	
+repo
+	users
+	services (packages?)
+		abc
+		xyz
+			route.xml
+			properties
+			
+
+user.srv_gft.authorized.for.service.BAP-v3.operation.raadPlegenPersoon=true
+user.srv_gft.authorized.for.operation.raadPlegenPersoon=true
+user.srv_gft.authorized.for.service.BAP-v3=true
+user.srv_gft.authorized.for.package.xyz=true
+
